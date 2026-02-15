@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Start Quiz{% endblock %}
+
+{% block content %}
+<div class="page-center">
+
+  <form class="premium-card" method="post" action="/start/">
+    {% csrf_token %}
+
+    <h1>🎯 Start Quiz</h1>
+    <p class="subtitle">Test your knowledge</p>
+
+    <input class="premium-input"
+           type="text"
+           name="username"
+           placeholder="Your name"
+           required>
+
+    <div class="options">
+      <label class="option">
+        <input type="radio" name="topic" value="Python" required>
+        Python
+      </label>
+      <label class="option">
+        <input type="radio" name="topic" value="Java">
+        Java
+      </label>
+      <label class="option">
+        <input type="radio" name="topic" value="HTML">
+        HTML
+      </label>
+    </div>
+
+    <button class="premium-btn">Start Quiz</button>
+
+    <div class="footer-text">Learn • Practice • Improve</div>
+  </form>
+
+</div>
+{% endblock %}

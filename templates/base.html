@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}QuizApp{% endblock %}</title>
+  {% load static %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<nav class="app-navbar">
+  <div class="nav-container">
+    <div class="nav-brand">🚀 QuizApp</div>
+    <div class="nav-links">
+      <a class="nav-link" href="/">Home</a>
+      <a class="nav-link" href="/leaderboard/">Leaderboard</a>
+    </div>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

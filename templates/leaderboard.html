@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+<div class="page-center">
+
+  <div class="premium-card" style="max-width:520px;">
+
+    <h1 class="lb-title">🏆 Leaderboard</h1>
+    <p class="lb-subtitle">Top performers</p>
+
+    <form method="get" class="filter-bar">
+      <select name="topic" class="filter-select">
+        <option value="">All Topics</option>
+        {% for t in topics %}
+        <option value="{{ t }}" {% if t == selected_topic %}selected{% endif %}>
+          {{ t }}
+        </option>
+        {% endfor %}
+      </select>
+      <button class="filter-btn">Filter</button>
+    </form>
+
+    <table class="leaderboard-table">
+      <tr>
+        <th>#</th>
+        <th>User</th>
+        <th>Topic</th>
+        <th>Score</th>
+        <th>%</th>
+      </tr>
+
+      {% for s in page_obj %}
+      <tr class="score-row">
+        <td>{{ forloop.counter }}</td>
+        <td>{{ s.username }}</td>
+        <td>{{ s.topic }}</td>
+        <td>{{ s.score }}/{{ s.total }}</td>
+        <td>{{ s.percentage }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <div class="pagination-wrap">
+      {% if page_obj.has_previous %}
+        <a class="page-btn" href="?page={{ page_obj.previous_page_number }}">Prev</a>
+      {% endif %}
+      <span class="page-info">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+      {% if page_obj.has_next %}
+        <a class="page-btn" href="?page={{ page_obj.next_page_number }}">Next</a>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

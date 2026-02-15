@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Result{% endblock %}
+
+{% block content %}
+<div class="page-center">
+
+  <div class="premium-card">
+
+    <h1>🎉 Quiz Completed!</h1>
+    <h1>{{username}}</h1>
+    <p class="subtitle">Great job {{ username }}</p>
+
+    <h1>{{ score }} / {{ total }}</h1>
+
+    <div class="result-progress">
+      <div class="result-progress-fill"
+           data-p="{{ percentage }}"></div>
+    </div>
+
+    <h1 style="color:#22c55e;">{{ percentage }}%</h1>
+      <br><br><br>
+<div class="btn-group">
+      <a href="/" class="premium-btn">🏠 Home</a>
+      <a href="/leaderboard/" class="premium-btn">🏆 Leaderboard</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const fill = document.querySelector(".result-progress-fill");
+  if (fill) fill.style.width = fill.dataset.p + "%";
+</script>
+{% endblock %}

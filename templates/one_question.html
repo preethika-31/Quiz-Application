@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Question{% endblock %}
+
+{% block content %}
+<div class="page-center">
+
+  <div class="premium-card">
+
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+      <strong>Q {{ qno }} / {{ total }}</strong>
+      <strong>⏳ <span id="timer">{{ remaining }}</span>s</strong>
+    </div>
+
+    <div class="result-progress">
+      <div class="result-progress-fill"
+           data-progress="{{ progress }}"></div>
+    </div>
+
+    <h1 style="font-size:20px;margin-bottom:20px;">
+      {{ question.question }}
+    </h1>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="options">
+        {% for opt in options %}
+        <label class="option">
+          <input type="radio" name="answer" value="{{ opt }}" required>
+          {{ opt }}
+        </label>
+        {% endfor %}
+      </div>
+
+      <button class="premium-btn">
+        {% if qno == total %}Submit{% else %}Next{% endif %}
+      </button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const bar = document.querySelector(".result-progress-fill");
+  if (bar) {
+    bar.style.width = bar.dataset.progress + "%";
+  }
+
+  let t = parseInt(document.getElementById("timer").innerText);
+  setInterval(() => {
+    t--;
+    document.getElementById("timer").innerText = t;
+    if (t <= 0) location.href = "/quiz/submit/";
+  }, 1000);
+</script>
+{% endblock %}
