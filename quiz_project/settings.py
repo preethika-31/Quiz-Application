@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-i9^p3m1gb$xc^*dmt5wxn*m4cqp9e1#_i4gy3@0^^15$gixh4^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'quizdb',       #replace with your db
         'USER': 'root',         #replace with your user name
-        'PASSWORD': 'root',     #replace with your password
+        'PASSWORD': 'Preethaj31',     #replace with your password
         'HOST': 'localhost',
         'PORT': '3306',
     }
