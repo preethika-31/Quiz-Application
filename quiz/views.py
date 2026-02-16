@@ -12,12 +12,22 @@ def index(request):
 # ================= START QUIZ =================
 def start_quiz(request):
     if request.method == "POST":
-        request.session["username"] = request.POST.get("username")
-        request.session["topic"] = request.POST.get("topic")
+        username = request.POST.get("username")
+        topic = request.POST.get("topic")
+
+        # Validation
+        if not username or not topic:
+            return redirect("/")
+
+        # Check if questions exist for topic
+        if Question.objects.filter(topic=topic).count() == 0:
+            return redirect("/")
+
+        # Session setup
+        request.session["username"] = username
+        request.session["topic"] = topic
         request.session["answers"] = {}
         request.session["quiz_active"] = True
-
-        # TIMER
         request.session["quiz_start_time"] = time.time()
         request.session["quiz_duration"] = 120  # seconds
 
@@ -31,9 +41,13 @@ def quiz_question(request, qno):
     if not request.session.get("quiz_active"):
         return redirect("/")
 
-    # TIMER CALC
     start_time = request.session.get("quiz_start_time")
     duration = request.session.get("quiz_duration")
+
+    # Safety check
+    if not start_time or not duration:
+        return redirect("/")
+
     elapsed = time.time() - start_time
     remaining = int(duration - elapsed)
 
@@ -41,8 +55,14 @@ def quiz_question(request, qno):
         return redirect("/quiz/submit/")
 
     topic = request.session.get("topic")
+    if not topic:
+        return redirect("/")
+
     questions = list(Question.objects.filter(topic=topic))
     total = len(questions)
+
+    if total == 0:
+        return redirect("/")
 
     if qno < 1 or qno > total:
         return redirect("/quiz/1/")
@@ -60,6 +80,7 @@ def quiz_question(request, qno):
 
     if request.method == "POST":
         ans = request.POST.get("answer")
+
         answers = request.session.get("answers", {})
         answers[str(question.id)] = ans
         request.session["answers"] = answers
@@ -93,15 +114,18 @@ def final_submit(request):
 
     questions = Question.objects.filter(topic=topic)
 
+    total = questions.count()
+    if total == 0:
+        return redirect("/")
+
     score = 0
     for q in questions:
         if answers.get(str(q.id)) == q.answer:
             score += 1
 
-    total = questions.count()
     percentage = round((score / total) * 100, 2)
 
-    # SAVE TO DB
+    # Save score
     Score.objects.create(
         username=username,
         topic=topic,
@@ -110,7 +134,7 @@ def final_submit(request):
         percentage=percentage,
     )
 
-    # SESSION CLEAR (IMPORTANT)
+    # Clear session
     request.session.flush()
 
     return render(request, "result.html", {
@@ -126,8 +150,8 @@ def leaderboard(request):
     selected_topic = request.GET.get("topic")
 
     base_qs = Score.objects.all()
-
     score_qs = base_qs.order_by("-percentage", "-score", "created_at")
+
     if selected_topic:
         score_qs = score_qs.filter(topic=selected_topic)
 
