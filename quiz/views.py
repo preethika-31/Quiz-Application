@@ -20,26 +20,10 @@ def index(request):
 def start_quiz(request):
     if request.method == "POST":
         username = request.POST.get("username")
-<<<<<<< HEAD
-        topic = request.POST.get("topic")
-
-        # Validation
-        if not username or not topic:
-            return redirect("/")
-
-        # Check if questions exist for topic
-        if Question.objects.filter(topic=topic).count() == 0:
-            return redirect("/")
-
-        # Session setup
-        request.session["username"] = username
-        request.session["topic"] = topic
-=======
         topic_id = request.POST.get("topic")
 
         request.session["username"] = username
         request.session["topic_id"] = topic_id
->>>>>>> clean-version
         request.session["answers"] = {}
         request.session["quiz_active"] = True
         request.session["quiz_start_time"] = time.time()
@@ -69,16 +53,8 @@ def quiz_question(request, qno):
     if remaining <= 0:
         return redirect("/quiz/submit/")
 
-<<<<<<< HEAD
-    topic = request.session.get("topic")
-    if not topic:
-        return redirect("/")
-
-    questions = list(Question.objects.filter(topic=topic))
-=======
     topic_id = request.session.get("topic_id")
     questions = list(Question.objects.filter(topic_id=topic_id))
->>>>>>> clean-version
     total = len(questions)
 
     if total == 0:
@@ -145,15 +121,11 @@ def final_submit(request):
         if selected_answer and selected_answer.strip() == q.answer.strip():
             score += 1
 
-<<<<<<< HEAD
-    percentage = round((score / total) * 100, 2)
-=======
     total = questions.count()
     percentage = round((score / total) * 100, 2) if total > 0 else 0
 
     # Get topic name for saving
     topic_name = questions.first().topic.name if questions.exists() else ""
->>>>>>> clean-version
 
     # Save score
     Score.objects.create(
