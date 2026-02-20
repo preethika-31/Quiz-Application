@@ -17,19 +17,16 @@
            required>
 
     <div class="options">
-      <label class="option">
-        <input type="radio" name="topic" value="Python" required>
-        Python
-      </label>
-      <label class="option">
-        <input type="radio" name="topic" value="Java">
-        Java
-      </label>
-      <label class="option">
-        <input type="radio" name="topic" value="HTML">
-        HTML
-      </label>
-    </div>
+  {% for topic in topics %}
+    <label class="option">
+      <input type="radio" name="topic" value="{{ topic.id }}" required>
+      {{ topic.name }}
+    </label>
+  {% empty %}
+      <p>No topics available</p>
+  {% endfor %}
+</div>
+
 
     <button class="premium-btn">Start Quiz</button>
 
