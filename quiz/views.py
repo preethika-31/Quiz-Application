@@ -1,18 +1,26 @@
 from django.shortcuts import render, redirect
-from .models import Question, Score
+from .models import Question, Score, Topic
 from django.core.paginator import Paginator
 import time
 
 
 # ================= HOME =================
+
+
+
 def index(request):
-    return render(request, "index.html")
+    topics = Topic.objects.all()   # DB la irukkura ella topics
+    return render(request, "index.html", {"topics": topics})
+
 
 
 # ================= START QUIZ =================
+
+
 def start_quiz(request):
     if request.method == "POST":
         username = request.POST.get("username")
+<<<<<<< HEAD
         topic = request.POST.get("topic")
 
         # Validation
@@ -26,14 +34,21 @@ def start_quiz(request):
         # Session setup
         request.session["username"] = username
         request.session["topic"] = topic
+=======
+        topic_id = request.POST.get("topic")
+
+        request.session["username"] = username
+        request.session["topic_id"] = topic_id
+>>>>>>> clean-version
         request.session["answers"] = {}
         request.session["quiz_active"] = True
         request.session["quiz_start_time"] = time.time()
-        request.session["quiz_duration"] = 120  # seconds
+        request.session["quiz_duration"] = 120
 
         return redirect("/quiz/1/")
 
     return redirect("/")
+
 
 
 # ================= QUIZ QUESTION =================
@@ -54,11 +69,16 @@ def quiz_question(request, qno):
     if remaining <= 0:
         return redirect("/quiz/submit/")
 
+<<<<<<< HEAD
     topic = request.session.get("topic")
     if not topic:
         return redirect("/")
 
     questions = list(Question.objects.filter(topic=topic))
+=======
+    topic_id = request.session.get("topic_id")
+    questions = list(Question.objects.filter(topic_id=topic_id))
+>>>>>>> clean-version
     total = len(questions)
 
     if total == 0:
@@ -100,19 +120,20 @@ def quiz_question(request, qno):
     })
 
 
+
 # ================= FINAL SUBMIT =================
 def final_submit(request):
     if not request.session.get("quiz_active"):
         return redirect("/")
 
-    topic = request.session.get("topic")
+    topic_id = request.session.get("topic_id")
     username = request.session.get("username")
     answers = request.session.get("answers", {})
 
-    if not topic or not username:
+    if not topic_id or not username:
         return redirect("/")
 
-    questions = Question.objects.filter(topic=topic)
+    questions = Question.objects.filter(topic_id=topic_id)
 
     total = questions.count()
     if total == 0:
@@ -120,15 +141,24 @@ def final_submit(request):
 
     score = 0
     for q in questions:
-        if answers.get(str(q.id)) == q.answer:
+        selected_answer = answers.get(str(q.id))
+        if selected_answer and selected_answer.strip() == q.answer.strip():
             score += 1
 
+<<<<<<< HEAD
     percentage = round((score / total) * 100, 2)
+=======
+    total = questions.count()
+    percentage = round((score / total) * 100, 2) if total > 0 else 0
+
+    # Get topic name for saving
+    topic_name = questions.first().topic.name if questions.exists() else ""
+>>>>>>> clean-version
 
     # Save score
     Score.objects.create(
         username=username,
-        topic=topic,
+        topic=topic_name,
         score=score,
         total=total,
         percentage=percentage,
@@ -143,6 +173,7 @@ def final_submit(request):
         "total": total,
         "percentage": percentage,
     })
+
 
 
 # ================= LEADERBOARD =================
